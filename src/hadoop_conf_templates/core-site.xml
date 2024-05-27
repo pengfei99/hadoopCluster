@@ -1,0 +1,16 @@
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://spark-m01:9000</value>
+    </property>
+
+    <property>
+        <name>hadoop.tmp.dir</name>
+        <value>file:///opt/hadoop/tmp</value>
+    </property>
+
+    <property>
+        <name>io.file.buffer.size</name>
+        <value>131072</value>
+    </property>
+</configuration>
