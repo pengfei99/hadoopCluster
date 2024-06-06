@@ -97,7 +97,7 @@ export HADOOP_HEAPSIZE_MIN=1024
 export HADOOP_OS_TYPE=${HADOOP_OS_TYPE:-$(uname -s)}
 
 # Extra Java runtime options for some Hadoop commands
-# and clients (i.e., hdfs dfs -blah).  These get appended to HADOOP_OPTS for
+# and 04.Cluster_clients (i.e., hdfs dfs -blah).  These get appended to HADOOP_OPTS for
 # such commands.  In most cases, # this should be left empty and
 # let users supply it on the command line.
 # export HADOOP_CLIENT_OPTS=""
