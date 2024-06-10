@@ -79,35 +79,52 @@ You can find the official doc [here](https://spark.apache.org/docs/latest/spark-
 
 #### Hadoop Yarn cluster
 
+You can find the official doc [here](https://spark.apache.org/docs/latest/running-on-yarn.html)
+
 Yarn supports two deploy-mode:
 - `client` : in client mode, the driver runs on the computer which submits the job. An `Application Master(AM)` will be created
-            to control the workers. If your job is complexe, you may need to increase the resource of the `AM`
+            to control the workers. If the job has complexe dags, you may need to increase the resource of the `AM`.
+
+This figure shows the client mode archi:
+
+![spark_yarn_client_mode.png](../../../images/spark_yarn_client_mode.png)
+
 - `cluster` : in cluster mode, the driver runs on a worker of the cluster. The `driver` will play the role of `AM`, 
-             so no need to set up resource for `AM`
+             so no need to set up resource for `AM`.
+
+This figure shows the cluster mode archi:
+
+![spark_yarn_cluster_mode.png](../../../images/spark_yarn_cluster_mode.png)
 
 
 ```shell
 # Run on a YARN cluster in client deploy mode
 export HADOOP_CONF_DIR=XXX
 ./bin/spark-submit \
-  --class org.apache.spark.examples.SparkPi \
   --master yarn \
   --deploy-mode client \
-  --conf spark.yarn.am.memory=4g
-  /path/to/examples.jar \
+  --conf spark.yarn.queue=prod \
+  --conf spark.yarn.am.memory=4g \
+  --conf spark.yarn.am.cores=2 \
+  /path/to/examples/src/main/python/pi.py \
   1000
   
   
 # Run on a YARN cluster in cluster deploy mode
 export HADOOP_CONF_DIR=XXX
 ./bin/spark-submit \
-  --class org.apache.spark.examples.SparkPi \
   --master yarn \
   --deploy-mode cluster \
-  /path/to/examples.jar \
+  --conf spark.yarn.queue=prod \
+  /path/to/examples/src/main/python/pi.py \
   1000
-
 ```
+
+> The default value for `spark.yarn.am.memory` is 512m, `spark.yarn.am.cores` is 1 
+> Yarn has a concept of queue, the cluster may have one or more queue, and you must submit your job to the right queue
+> By default, spark-submit use the queue `default`, if the cluster does not have a `default` queue, the submit will
+> not work
+
 #### K8s cluster
 
 ```shell
@@ -121,16 +138,17 @@ export HADOOP_CONF_DIR=XXX
   http://path/to/examples.jar \
   1000
 ```
+
 ### Cluster resource options
 
-When running in cluster mode, you need to set up cluster resources:
-- --driver-memory 4g \
-  --driver-cores 2 \
-  --executor-memory 8g \
-  --executor-cores 4 \
-  --num-executors 10 \
+When running in submit mode, you need to set up the cluster resources with the below options:
+- driver-memory 4g \
+- driver-cores 2 \
+- executor-memory 8g \
+- executor-cores 4 \
+- num-executors 10 \
 
-For the script
+Below is a full example
 
 ```shell
 spark-submit \
@@ -142,11 +160,56 @@ spark-submit \
   --executor-cores 4 \
   --num-executors 10 \
   --conf spark.some.config.option=value \
-
+  /path/to/examples/src/main/python/pi.py \
+  1000 
 ```
-### Can't find 
+
+To avoid typing them every time, you can add them to your `spark-default.conf`
+
+Check this `spark-default.conf` template [file](../../../src/hadoop_conf_templates/spark/spark-defaults.conf)
+
+### Python submit options
+
+To submit python script, you may need to check the below options
+
+#### Skip uploading the spark required jars
+
+By default, the spark-submit will zip all the dependencies jar of your local spark-home and send them to the cluster, 
+to make sure the cluster has the same spark jar as your local env. If you are sure, you can upload them to the hdfs
+and ask spark-submit to skip this step by using the below option
 
 ```shell
-spark-submit --master yarn --deploy-mode cluster --conf spark.yarn.queue=prod --conf spark.yarn.archive=hdfs:///system/libs/spark_libs.zip
+--conf spark.yarn.archive=hdfs:///system/libs/spark_libs.zip
+```
+
+#### Specify custom python binary location
+
+If the python binary on the spark cluster is not the standard locaiton, you can specify the python bin path in the spark
+submit command
+
+
+```shell
+
+spark-submit --master yarn --deploy-mode cluster 
  --conf spark.pyspark.driver.python=/usr/bin/python3 --conf spark.pyspark.python=/usr/bin/python3 --conf spark.yarn.am.memory=4g
+```
+
+### Custom spark log config
+
+The spark cluster has a default log4j properties(https://github.com/apache/spark/blob/master/conf/log4j2.properties.template), 
+you can overwrite this config by using your own config.
+
+```shell
+--files "/path/to/custom/log4j.properties" \
+--conf "spark.driver.extraJavaOptions=-Dlog4j.configuration=file:/path/to/custom/log4j.properties"
+--conf "spark.executor.extraJavaOptions=-Dlog4j.configuration=file:/path/to/custom/log4j.properties"
+```
+
+> The `--files "/path/to/custom/log4j.properties"` option distributes the custom log4j file to all nodes in the cluster
+> 
+> 
+### Other useful examples
+
+```shell
+
 ```
