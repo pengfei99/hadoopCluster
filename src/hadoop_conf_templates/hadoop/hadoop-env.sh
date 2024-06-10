@@ -1,3 +1,4 @@
+
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -72,14 +73,14 @@ export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 # prefer any Xmx setting in their respective _OPT variable.
 # There is no default; the JVM will autoscale based upon machine
 # memory size.
-export HADOOP_HEAPSIZE_MAX=2048
+export HADOOP_HEAPSIZE_MAX=22000
 
 # The minimum amount of heap to use (Java -Xms).  If no unit
 # is provided, it will be converted to MB.  Daemons will
 # prefer any Xms setting in their respective _OPT variable.
 # There is no default; the JVM will autoscale based upon machine
 # memory size.
-export HADOOP_HEAPSIZE_MIN=1024
+export HADOOP_HEAPSIZE_MIN=8000
 
 # Enable extra debugging of Hadoop's JAAS binding, used to set up
 # Kerberos security.
@@ -97,7 +98,7 @@ export HADOOP_HEAPSIZE_MIN=1024
 export HADOOP_OS_TYPE=${HADOOP_OS_TYPE:-$(uname -s)}
 
 # Extra Java runtime options for some Hadoop commands
-# and 04.Cluster_clients (i.e., hdfs dfs -blah).  These get appended to HADOOP_OPTS for
+# and clients (i.e., hdfs dfs -blah).  These get appended to HADOOP_OPTS for
 # such commands.  In most cases, # this should be left empty and
 # let users supply it on the command line.
 # export HADOOP_CLIENT_OPTS=""
@@ -286,9 +287,9 @@ export HADOOP_OS_TYPE=${HADOOP_OS_TYPE:-$(uname -s)}
 # c) ... or set them directly
 # export HDFS_NAMENODE_OPTS="-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Xloggc:${HADOOP_LOG_DIR}/gc-rm.log-$(date +'%Y%m%d%H%M')"
 
-
-# export HDFS_NAMENODE_OPTS="-Dhadoop.security.logger=INFO,RFAS -Xms1024m -Xmx1024 -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled -XX:+PrintTenuringDistribution -XX:OnOutOfMemoryError={{AGENT_COMMON_DIR}}/killparent.sh"
-export HDFS_NAMENODE_OPTS="-Dhadoop.security.logger=INFO,RFAS -XX:+UseG1GC -XX:InitialHeapSize=2g -XX:MaxHeapSize=2g -XX:MaxGCPauseMillis=500 -XX:+DisableExplicitGC -XX:+UseStringDeduplication -XX:+ParallelRefProcEnabled -XX:MaxMetaspaceSize=256m -XX:MaxTenuringThreshold=1 -Xlog:gc=ERROR:file=/tmp/gc.log:time,uptime,level,tags:filecount=5,filesize=100m"
+# this is the default:
+export HDFS_NAMENODE_OPTS="-Dhadoop.security.logger=INFO,RFAS -XX:+UseG1GC -XX:InitialHeapSize=8g -XX:MaxHeapSize=16g -XX:MaxGCPauseMillis=500 -XX:+ParallelRefProcEnabled -XX:MaxMetaspaceSize=1024m -XX:MaxTenuringThreshold=6 -XX:+DisableExplicitGC"
+export HDFS_DATANODE_OPTS="-Dhadoop.security.logger=ERROR,RFAS -XX:+UseG1GC -XX:InitialHeapSize=8g -XX:MaxHeapSize=16g -XX:MaxGCPauseMillis=500 -XX:+ParallelRefProcEnabled -XX:MaxMetaspaceSize=1024m -XX:MaxTenuringThreshold=6 -XX:+DisableExplicitGC"
 ###
 # SecondaryNameNode specific parameters
 ###
@@ -306,8 +307,8 @@ export HDFS_NAMENODE_OPTS="-Dhadoop.security.logger=INFO,RFAS -XX:+UseG1GC -XX:I
 # These options will be appended to the options specified as HADOOP_OPTS
 # and therefore may override any similar flags set in HADOOP_OPTS
 #
-
-export HDFS_DATANODE_OPTS="-Dhadoop.security.logger=ERROR,RFAS -XX:+UseG1GC -XX:InitialHeapSize=2g -XX:MaxHeapSize=2g -XX:MaxGCPauseMillis=500 -XX:+DisableExplicitGC -XX:+UseStringDeduplication -XX:+ParallelRefProcEnabled -XX:MaxMetaspaceSize=256m -XX:MaxTenuringThreshold=1 -Xlog:gc=ERROR:file=/tmp/gc.log:time,uptime,level,tags:filecount=5,filesize=100m"
+# This is the default:
+# export HDFS_DATANODE_OPTS="-Dhadoop.security.logger=ERROR,RFAS"
 
 # On secure datanodes, user to run the datanode as after dropping privileges.
 # This **MUST** be uncommented to enable secure HDFS if using privileged ports
