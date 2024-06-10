@@ -184,14 +184,20 @@ and ask spark-submit to skip this step by using the below option
 
 #### Specify custom python binary location
 
-If the python binary on the spark cluster is not the standard locaiton, you can specify the python bin path in the spark
+If the python binary on the spark cluster is not the standard location, you can specify the python bin path in the spark
 submit command
 
+- `spark.pyspark.driver.python`: Specify the python binary path to use for pyspark in driver
+- `spark.pyspark.python`: Specify the python binary path to use for pyspark in drivers and executors
 
 ```shell
 
-spark-submit --master yarn --deploy-mode cluster 
- --conf spark.pyspark.driver.python=/usr/bin/python3 --conf spark.pyspark.python=/usr/bin/python3 --conf spark.yarn.am.memory=4g
+spark-submit 
+ --master yarn \
+ --deploy-mode cluster \
+ --conf spark.pyspark.driver.python=/usr/bin/python3 \
+ --conf spark.pyspark.python=/usr/bin/python3 \
+ 
 ```
 
 ### Custom spark log config
@@ -206,8 +212,42 @@ you can overwrite this config by using your own config.
 ```
 
 > The `--files "/path/to/custom/log4j.properties"` option distributes the custom log4j file to all nodes in the cluster
-> 
-> 
+
+### Add extra dependencies
+
+There are two possible ways to add dependencies.
+- jar files
+- python files
+
+
+#### Add extra jar files
+If your application uses some extra jar files, you can add them with the option `--jars`. Below is an example
+
+```shell
+./bin/spark-submit \
+--master yarn \
+--deploy-mode cluster \
+--conf "spark.sql.shuffle.partitions=20000" \
+--jars "/path/to/dependency1.jar, /path/to/dependency2.jar"
+--class com.sparkbyexamples.WordCountExample \
+spark-by-examples.jar 
+```
+
+#### Add extra python files
+
+You can add extra python files with options `--py-files`, it accepts .py, .zip and .egg files
+
+```shell
+./bin/spark-submit \
+   --master yarn \
+   --deploy-mode cluster \
+   --py-files /path/to/file1.py,/path/to/file2.py,/path/to/file3.zip
+   wordByExample.py
+```
+
+> The .egg file is just a .zip file with some metadata, which is used to distribut python package(like the .jar file).
+> You can find the content of .egg file in https://svn.python.org/projects/sandbox/trunk/setuptools/doc/formats.txt
+
 ### Other useful examples
 
 ```shell
