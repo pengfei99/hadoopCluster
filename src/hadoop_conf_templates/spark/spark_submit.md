@@ -125,6 +125,28 @@ export HADOOP_CONF_DIR=XXX
 > By default, spark-submit use the queue `default`, if the cluster does not have a `default` queue, the submit will
 > not work
 
+
+Spark yarn has its own option to distribute resourse among workers. Depending on the type of resource to be 
+distributed over , we have following options :
+
+- **spark.yarn.dist.jars**: (default: empty) is a collection of additional jars to distribute. It is used when 
+       Client distributes additional resources as specified using **--jars** command-line option for spark-submit. 
+- **spark.yarn.dist.files**: (default: empty) is a collection of additional files to distribute. It is used when 
+         Client distributes additional resources as specified using **--files** command-line option for spark-submit.
+- **spark.yarn.dist.archives**: (default: empty) is a collection of additional archives to distribute. It is used 
+         when Client distributes additional resources as specified using **--archives** command-line option for spark-submit.
+
+```shell
+# copy spark jars to hdfs
+hdfs dfs -put /path/to/spark/jars/* /user/spark/spark3jars
+
+# submit job with uploaded jars, it can increase some performence
+spark-submit \
+
+   ...
+   
+   --conf spark.yarn.jars=hdfs:///user/spark/spark3jars/*
+```
 #### K8s cluster
 
 ```shell
