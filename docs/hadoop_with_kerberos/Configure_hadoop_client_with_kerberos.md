@@ -107,12 +107,12 @@ source /etc/profile.d/hadoop.sh
 
 ## Configure the hadoop client
 
-You will need to edit three config file in `/opt/hadoop/hadoop-3.3.6/etc/hadoop`:
+You will need to edit three configuration files in `/opt/hadoop/hadoop-3.3.6/etc/hadoop`:
 - core-site.xml
 - hdfs-site.xml
 - yarn-site.xml
 
-Below templates are the minimum example for the client to work, for extra features you need to add more config:
+Below file templates are the minimum example for the client to work, for extra features you need to add more config:
 
 ### core-site.xml example
 
