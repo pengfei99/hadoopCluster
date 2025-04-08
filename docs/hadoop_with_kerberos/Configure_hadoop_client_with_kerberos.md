@@ -160,37 +160,28 @@ Below file templates are the minimum example for the client to work, for extra f
 
 ### yarn-site.xml
 
+You can notice that, we only specified the yarn resource manager principal, we did not provide the keytab file 
+for this principal. Because when we submit a job to resource manager, we only need to tell it who is responsible
+for creating the `Application Manager(AM)`. As the AM is created by the yarn which run in the cluster, so on the client
+side, we don't need to provide keytab for yarn.
 ```xml
 <?xml version="1.0"?>
 
 <configuration>
   <property>
-    <name>yarn.nodemanager.hostname</name>
-    <value>spark-m02.casdds.casd</value>
-  </property>
-  <property>
     <name>yarn.resourcemanager.hostname</name>
     <value>spark-m01.casdds.casd</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.principal</name>
-    <value>yarn/spark-m01.casdds.casd@CASDDS.CASD</value>
-  </property>
-  <property>
-    <name>yarn.timeline-service.principal</name>
-    <value>yarn/spark-m02.casdds.casd@CASDDS.CASD</value>
-  </property>
-  <property>
-    <name>yarn.nodemanager.principal</name>
-    <value>yarn/spark-m02.casdds.casd@CASDDS.CASD</value>
-  </property>
-  <property>
-    <name>yarn.timeline-service.http-authentication.type</name>
-    <value>kerberos</value>
-  </property>
+  <name>yarn.resourcemanager.principal</name>
+  <value>yarn/_HOST@CASDDS.CASD</value>
+</property>
 </configuration>
 
 ```
+
+> In `yarn/_HOST@CASDDS.CASD`, the `_HOST` is a wildcard, the yarn service will replace it with the right FQDN of the
+> target server. 
 
 ## Test your hadoop client
 

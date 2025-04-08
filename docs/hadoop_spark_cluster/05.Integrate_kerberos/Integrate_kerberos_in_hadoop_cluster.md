@@ -21,27 +21,53 @@ Suppose we have three servers, in each server we run different services:
 
 ### 1.1 Prepare service account and their keytab
 
+To integrate Kerberos in a Hadoop cluster, we need to secure not only the user authentication, but also the service 
+authentication(e.g. hdfs, yarn, etc.). As the service account can't provide password in the prompt, we need to enable
+passwordless authentication(.keytabs). We need at least four service principals:
+
+- `host principals`: These principals are used to authenticate the server.
+- `hdfs principals`: These principals are used by HDFS services such as `namenode`, and `datanode` to authenticate
+- `http principals`: These principals are used by `HDFS webfs` services to authenticate
+- `yarn principals`: These principals are used by Yarn services such as `Resource Manager`, and `Node Manager` to authenticate
+- `user principal`: User principal is used to access hdfs, and negotiate resources
+- `spark principals`: These principals are used by the Spark drivers, and executors to authenticate (Optional, not needed since spark 3.0)
+
 By convention, we recommend you to create `a dedicated AD/Ldap account and kerberos principal for each service`. 
 This ensures `secure authentication` and `proper ticket management`. It's also easier to monitor access and avoid 
 unexpected situations. Technically, an AD/Ldap account can be associated with one or more kerberos principals.
 
+We also recommend a naming convention for Kerberos principals. Below is a list of normal forms for the principals
+
+```shell
+# for host principals
+host/<FQDN>@REALM
+# for hdfs principals
+hdfs/<FQDN>@REALM
+# for http principals
+http/<FQDN>@REALM
+# for yarn principals
+yarn/<FQDN>@REALM
+# for user principals
+<uid>/<FQDN>@REALM
+```
+
 Below is a list of all AD/Ldap accounts and kerberos principal you need to create:
 
-| Service	 | Hadoop Role     | Host	                  | Kerberos Principal                 | AD account name |
-|----------|-----------------|------------------------|------------------------------------|-----------------|
-| HDFS     | NameNode	       | spark-m01.casdds.casd  | nn/spark-m01.casdds.casd@CASDDS.CASD | hdfs-nn         |
-| HDFS     | DataNode	       | spark-m02.casdds.casd	 | dn/spark-m02.casdds.casd@CASDDS.CASD | hdfs-dn1        |
-| HDFS     | DataNode	       | spark-m03.casdds.casd	 | dn/spark-m03.casdds.casd@CASDDS.CASD | hdfs-dn2        |
+| Service	 | Hadoop Role     | Host	                  | Kerberos Principal                     | AD account name |
+|----------|-----------------|------------------------|----------------------------------------|-----------------|
+| HOST     | None	           | spark-m01.casdds.casd  | host/spark-m01.casdds.casd@CASDDS.CASD | spark-m01       |
+| HOST     | None            | spark-m02.casdds.casd  | host/spark-m02.casdds.casd@CASDDS.CASD | spark-m02       |
+| HOST     | None            | spark-m03.casdds.casd  | host/spark-m03.casdds.casd@CASDDS.CASD | spark-m03       |
+| HDFS     | NameNode	       | spark-m01.casdds.casd  | hdfs/spark-m01.casdds.casd@CASDDS.CASD | hdfs-nn         |
+| HDFS     | DataNode	       | spark-m02.casdds.casd	 | hdfs/spark-m02.casdds.casd@CASDDS.CASD | hdfs-dn1        |
+| HDFS     | DataNode	       | spark-m03.casdds.casd	 | hdfs/spark-m03.casdds.casd@CASDDS.CASD | hdfs-dn2        |
 | HDFS     | HTTP Service    | spark-m01.casdds.casd  | http/spark-m01.casdds.casd@CASDDS.CASD | http-nn         |
 | HDFS     | HTTP Service    | spark-m02.casdds.casd	 | http/spark-m02.casdds.casd@CASDDS.CASD | http-dn1        |
 | HDFS     | HTTP Service    | spark-m03.casdds.casd	 | http/spark-m03.casdds.casd@CASDDS.CASD | http-dn2        |
-| YARN     | ResourceManager | spark-m01.casdds.casd  | rm/spark-m01.casdds.casd@CASDDS.CASD | yarn-rn         |
-| YARN     | NodeManager     | spark-m02.casdds.casd  | nm/spark-m02.casdds.casd@CASDDS.CASD | yarn-nm1        |
-| YARN     | NodeManager     | spark-m03.casdds.casd  | nm/spark-m03.casdds.casd@CASDDS.CASD | yarn-nm2        |
-| Spark    | History Server  | spark-m01.casdds.casd  | jhs/spark-m01.casdds.casd@CASDDS.CASD | spark-jhs       |
-| HOST     | None	           | spark-m01.casdds.casd  | host/spark-m01.casdds.casd@CASDDS.CASD | spark-m01       |
-| HOST     | None            | spark-m02.casdds.casd	 | host/spark-m02.casdds.casd@CASDDS.CASD | spark-m02       |
-| HOST     | None            | spark-m03.casdds.casd	 | host/spark-m03.casdds.casd@CASDDS.CASD | spark-m03       |
+| YARN     | ResourceManager | spark-m01.casdds.casd  | yarn/spark-m01.casdds.casd@CASDDS.CASD | yarn-rn         |
+| YARN     | NodeManager     | spark-m02.casdds.casd  | yarn/spark-m02.casdds.casd@CASDDS.CASD | yarn-nm1        |
+| YARN     | NodeManager     | spark-m03.casdds.casd  | yarn/spark-m03.casdds.casd@CASDDS.CASD | yarn-nm2        |
+| Spark    | History Server  | spark-m01.casdds.casd  | jhs/spark-m01.casdds.casd@CASDDS.CASD  | spark-jhs       |
 
 
 > The AD account name cannot contain special character such as `@` and `.`, so we can't use the principal name as 
