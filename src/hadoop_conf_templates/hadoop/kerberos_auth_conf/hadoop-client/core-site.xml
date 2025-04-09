@@ -1,0 +1,14 @@
+<configuration>
+	<property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://spark-m01.casdds.casd:8020</value>
+    </property>
+	<property>
+        <name>hadoop.security.authentication</name>
+        <value>kerberos</value>
+    </property>
+    <property>
+        <name>hadoop.security.authorization</name>
+        <value>true</value>
+    </property>
+</configuration>

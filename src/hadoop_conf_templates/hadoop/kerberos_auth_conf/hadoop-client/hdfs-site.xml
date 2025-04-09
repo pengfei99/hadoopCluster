@@ -1,0 +1,10 @@
+<configuration>
+ <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+</property>
+<property>
+    <name>dfs.namenode.kerberos.principal</name>
+    <value>hdfs/spark-m01.casdds.casd@CASDDS.CASD</value>
+  </property>
+</configuration>

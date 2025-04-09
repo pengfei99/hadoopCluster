@@ -1,0 +1,10 @@
+<configuration>
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>spark-m01.casdds.casd</value>
+  </property>
+  <property>
+  <name>yarn.resourcemanager.principal</name>
+  <value>yarn/_HOST@CASDDS.CASD</value>
+</property>
+</configuration>
