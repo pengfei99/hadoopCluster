@@ -85,9 +85,9 @@ ktpass -princ nn/spark-m01.casdds.casd@CASDDS.CASD -mapuser hdfs-nn -crypto ALL 
 
 After you generate the required keytab files for all principals, you need to copy them to the target server.
 For example, for server `spark-m01.casdds.casd@CASDDS.CASD`, you need to copy the keytab file for principals:
-- nn/spark-m01.casdds.casd@CASDDS.CASD
-- HTTP/spark-m01.casdds.casd@CASDDS.CASD
-- rm/spark-m01.casdds.casd@CASDDS.CASD
+- hdfs/spark-m01.casdds.casd@CASDDS.CASD
+- http/spark-m01.casdds.casd@CASDDS.CASD
+- yarn/spark-m01.casdds.casd@CASDDS.CASD
 - jhs/spark-m01.casdds.casd@CASDDS.CASD
 - host/spark-m01.casdds.casd@CASDDS.CASD
 
@@ -96,7 +96,7 @@ For example, for server `spark-m01.casdds.casd@CASDDS.CASD`, you need to copy th
 You can test the validity of the keytab file by asking a kerberos ticket. Below command is an example
 
 ```shell
-kinit -kt /etc/hdfs-nn.keytab nn/spark-m01.casdds.casd@CASDDS.CASD
+kinit -kt /etc/hdfs-nn.keytab hdfs/spark-m01.casdds.casd@CASDDS.CASD
 ```
 
 To show the details of a keytab file, you can use the below command: 
@@ -316,10 +316,13 @@ sun.security.krb5.disableReferrals=true
 ### 2.3 Update the hadoop service configuration
 
 #### 2.3.1 For Name nodes
+
 For `Name nodes`, you need to edit the below config files:
 - core-site.xml
 - hdfs-site.xml
 - yarn-site.xml
+
+The below modification is made in `spark-m01.casdds.casd`
 
 ```shell
 sudo vim core-site.xml 
@@ -352,7 +355,7 @@ sudo vim core-site.xml
   </property>
   <property>
     <name>hadoop.http.authentication.kerberos.principal</name>
-    <value>HTTP/spark-m01.casdds.casd@CASDDS.CASD</value>
+    <value>http/spark-m01.casdds.casd@CASDDS.CASD</value>
   </property>
   <property>
     <name>hadoop.http.authentication.kerberos.keytab</name>
@@ -543,7 +546,11 @@ For data nodes, you need to edit the below configuration files:
 - core-site.xml
 - hdfs-site.xml
 - yarn-site.xml
+- 
+The below modification is made in `spark-m02.casdds.casd`
 
+> You need to do similar modification in the `spark-m03`, remember to adapt the principal name and keytab path
+>
 ```shell
 sudo vim core-site.xml
 
