@@ -1,0 +1,117 @@
+<configuration>
+	<property>
+		<name>dfs.https.server.keystore.resource</name>
+		<value>ssl-server.xml</value>
+	</property>
+	<property>
+		<name>dfs.http.policy</name>
+		<value>HTTPS_ONLY</value>
+	</property>
+	<property>
+		<name>dfs.https.port</name>
+		<value>50470</value>
+	</property>
+	<property>
+		<name>dfs.data.transfer.protection</name>
+		<value>authentication</value>
+	</property>
+	<property>
+		<name>dfs.secondary.https.port</name>
+		<value>50490</value>
+     		<description>The https port where secondary-namenode binds</description>
+	</property>
+	<property>
+		<name>dfs.https.address</name>
+		<value>spark-m01.casdds.casd:50470</value>
+     		<description>The https address where namenode binds</description>
+	</property>
+	<property>
+		<name>dfs.encrypt.data.transfer</name>
+		<value>true</value>
+	</property>
+	<property>
+        	<name>dfs.replication</name>
+        	<value>3</value>
+    	</property>
+    	<property>
+        	<name>dfs.namenode.name.dir</name>
+        	<value>file:///opt/hadoop/hadoop_tmp/hdfs/data</value>
+    	</property>
+    	<property>
+        	<name>dfs.datanode.data.dir</name>
+       		<value>file:///opt/hadoop/hadoop_tmp/hdfs/data</value>
+	</property>
+	<property>
+     		<name>dfs.permissions</name>
+     		<value>true</value>
+     		<description> If "true", enable permission checking in
+    		 HDFS. If "false", permission checking is turned
+     		off, but all other behavior is
+     		unchanged. Switching from one parameter value to the other does
+     		not change the mode, owner or group of files or
+     		directories. </description>
+	</property>
+	<property>
+     		<name>dfs.namenode.handler.count</name>
+     		<value>100</value>
+     		<description>Added to grow Queue size so that more
+     		client connections are allowed</description>
+	</property>
+	<property>
+     		<name>ipc.server.max.response.size</name>
+     		<value>5242880</value>
+	</property>
+	<property>
+     		<name>dfs.permissions.supergroup</name>
+     		<value>hadoop</value>
+     		<description>The name of the group of super-users.</description>
+	</property>
+	<property>
+     		<name>dfs.cluster.administrators</name>
+     		<value>hadoop</value>
+     		<description>ACL for who all can view the default servlets in the HDFS</description>
+	</property>
+	<property>
+     		<name>dfs.access.time.precision</name>
+     		<value>0</value>
+     		<description>The access time for HDFS file is precise upto this
+     		value.The default value is 1 hour. Setting a value of 0
+     		disables access times for HDFS.
+     		</description>
+	</property>
+	<property>
+     		<name>dfs.block.access.token.enable</name>
+     		<value>true</value>
+     		<description> If "true", access tokens are used as capabilities
+     		for accessing datanodes. If "false", no access tokens are checked on
+     		accessing datanodes. </description>
+	</property>
+	<property>
+     		<name>ipc.server.read.threadpool.size</name>
+     		<value>5</value>
+	</property>
+	<property>
+  		<name>dfs.namenode.http-address</name>
+  		<value>spark-m01.casdds.casd:9870</value>
+	</property>
+ 	 <property>
+        	<name>dfs.namenode.kerberos.principal</name>
+        	<value>hdfs/spark-m01.casdds.casd@CASDDS.CASD</value>
+    	</property>
+    	<property>
+        	<name>dfs.namenode.keytab.file</name>
+        	<value>/etc/krb5.keytab</value>
+    	</property>
+  	<property>
+        	<name>dfs.secondary.namenode.kerberos.principal</name>
+        	<value>hdfs/spark-m01.casdds.casd@CASDDS.CASD</value>
+    	</property>
+    	<property>
+        	<name>dfs.secondary.namenode.keytab.file</name>
+        	<value>/etc/krb5.keytab</value>
+    	</property>
+    	<property>
+        	<name>dfs.permissions.enabled</name>
+        	<value>true</value>
+    	</property>
+</configuration>
