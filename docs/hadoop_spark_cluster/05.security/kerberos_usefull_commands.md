@@ -34,7 +34,7 @@ vim ~/.bashrc
 
 
 # add the below lines
-xport KRB5_CLIENT_KTNAME=~/$USER-user.keytab
+export KRB5_CLIENT_KTNAME=~/$USER-user.keytab
 export KRB5CCNAME=/tmp/krb5cc_$(id -u)
 export KRB5_PRINCIPAL="$USER@CASDDS.CASD"
 alias kinit-default='kinit -kt $KRB5_CLIENT_KTNAME $KRB5_PRINCIPAL'
